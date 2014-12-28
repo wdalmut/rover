@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/jbrukh/bayesian"
 )
@@ -36,7 +37,7 @@ func NewRoverClassifierFromPieces(goodStuff, badStuff []string) *RoverClassifier
 }
 
 func (c *RoverClassifier) Classify(sentence string) bayesian.Class {
-	scores, _, _ := c.LogScores(tokenize(sentence))
+	scores, _, _ := c.LogScores(tokenize(strings.ToLower(sentence)))
 
 	if scores[0] > scores[1] {
 		return Good
