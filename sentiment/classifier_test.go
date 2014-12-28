@@ -21,3 +21,19 @@ func TestExtractFromFiles(t *testing.T) {
 		}
 	}
 }
+
+func TestClassifierAtWork(t *testing.T) {
+	classifier := NewRoverClassifierFromPieces([]string{"I", "am", "happy"}, []string{"I", "am", "unhappy"})
+
+	result := classifier.Classify("happy stuff!")
+
+	if result != Good {
+		t.Errorf("This sentence should be a good stuff")
+	}
+
+	result = classifier.Classify("unhappy things!")
+
+	if result != Bad {
+		t.Errorf("This sentence should be a bad stuff")
+	}
+}

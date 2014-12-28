@@ -17,18 +17,32 @@ type RoverClassifier struct {
 	*bayesian.Classifier
 }
 
-func NewRoverClassifierFromFiles(positiveSentences string, negativeSentencies string) *RoverClassifier {
+func NewRoverClassifierFromFiles(positiveSentences, negativeSentencies string) *RoverClassifier {
+	goodStuff := extractFromFile(positiveSentences)
+	badStuff := extractFromFile(negativeSentencies)
+
+	return NewRoverClassifierFromPieces(goodStuff, badStuff)
+}
+
+func NewRoverClassifierFromPieces(goodStuff, badStuff []string) *RoverClassifier {
 	classifier := &RoverClassifier{
 		bayesian.NewClassifier(Good, Bad),
 	}
-
-	goodStuff := extractFromFile(positiveSentences)
-	badStuff := extractFromFile(negativeSentencies)
 
 	classifier.Learn(goodStuff, Good)
 	classifier.Learn(badStuff, Bad)
 
 	return classifier
+}
+
+func (c *RoverClassifier) Classify(sentence string) bayesian.Class {
+	scores, _, _ := c.LogScores(tokenize(sentence))
+
+	if scores[0] > scores[1] {
+		return Good
+	} else {
+		return Bad
+	}
 }
 
 func extractFromFile(filename string) []string {
