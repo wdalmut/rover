@@ -30,8 +30,6 @@ func main() {
 	var config Config
 	json.Unmarshal(file, &config)
 
-	fmt.Printf("%v", config)
-
 	client := async.NewClient(
 		config.ConsumerKey,
 		config.ConsumerSecret,
