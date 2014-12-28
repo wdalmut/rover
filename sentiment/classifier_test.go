@@ -37,3 +37,19 @@ func TestClassifierAtWork(t *testing.T) {
 		t.Errorf("This sentence should be a bad stuff")
 	}
 }
+
+func BenchmarkFullClassifierHappyString(b *testing.B) {
+	slices := NewRoverClassifierFromFiles("../files/rt-polarity.pos", "../files/rt-polarity.neg")
+
+	for i := 0; i < b.N; i++ {
+		slices.Classify("This is an happy string")
+	}
+}
+
+func BenchmarkFullClassifierUnhappyString(b *testing.B) {
+	slices := NewRoverClassifierFromFiles("../files/rt-polarity.pos", "../files/rt-polarity.neg")
+
+	for i := 0; i < b.N; i++ {
+		slices.Classify("This is an unhappy string")
+	}
+}
