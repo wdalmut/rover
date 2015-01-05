@@ -4,9 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"net/http"
 	"os"
 
 	"github.com/darkhelmet/twitterstream"
+	"github.com/gorilla/mux"
+	"github.com/wdalmut/rover/proxy"
+	"github.com/wdalmut/rover/proxy/wrap"
 	"github.com/wdalmut/rover/sentiment"
 	"github.com/wdalmut/twitterstream/async"
 )
@@ -19,6 +23,19 @@ type Config struct {
 }
 
 func main() {
+
+	router := mux.NewRouter()
+	server := proxy.Server{
+		Router: router,
+		HttpServer: &http.Server{
+			Addr:    "0.0.0.0:8082",
+			Handler: router,
+		},
+		Wrapper: &wrap.HtmlWrapper{},
+	}
+
+	server.ListenAndServe()
+
 	classifier := sentiment.NewRoverClassifierFromFiles("files/rt-polarity.pos", "files/rt-polarity.neg")
 
 	file, e := ioutil.ReadFile("./config.json")
@@ -37,7 +54,7 @@ func main() {
 		config.AccessSecret,
 	)
 
-	client.TrackAndServe("bieber", func(tweet *twitterstream.Tweet) {
+	client.TrackAndServe("sun", func(tweet *twitterstream.Tweet) {
 		class := classifier.Classify(tweet.Text)
 
 		fmt.Printf("Tweet: %s is %v\n\n", tweet.Text, class)

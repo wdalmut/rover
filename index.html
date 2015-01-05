@@ -1,0 +1,61 @@
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
+    </head>
+    <body>
+        <div class="container">
+            <div class="col-md-12">
+                <h1>Internet of Things!</h1>
+            </div>
+            <div class="col-md-6">
+                <h2>Control</h2>
+                <p>
+                    <button type="button" id="accendi" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                        On
+                    </button>
+                    <button type="button" id="spegni" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                        Off
+                    </button>
+                </p>
+            </div>
+            <div class="col-md-6">
+                <h2>Log</h2>
+                <div id="streamline">
+
+                </div>
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+        <script>
+            $(document).ready(function() {
+                $('#accendi').click(function() {
+                    $.post("/board", {
+                        "data": "1"
+                    }, function() {
+                        console.log("Acceso");
+                    });
+                });
+                $('#spegni').click(function() {
+                    $.post("/board", {
+                        "data": "0"
+                    }, function() {
+                        console.log("Spento");
+                    });
+                });
+
+                // Create IE + others compatible event handler
+                var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+                var eventer = window[eventMethod];
+                var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
+
+                // Listen to message from child window
+                eventer(messageEvent,function(e) {
+                    $('#streamline').append(e.data + "<br>");
+                },false);
+            });
+        </script>
+        <iframe height="0" width="0" style="display:none" src="/board/read" />
+    </body>
+</html>
